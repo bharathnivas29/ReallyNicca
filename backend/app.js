@@ -7,8 +7,9 @@ const path = require('path');
 // Import routes
 const extractRoutes = require('./api/extract');
 const graphRoutes = require('./api/graphs');
-const gapRoutes = require('./api/gaps');        // ← ADD THIS
-const ideaRoutes = require('./api/ideas');      // ← ADD THIS
+const gapRoutes = require('./api/gaps');
+const ideaRoutes = require('./api/ideas');
+const verifyRoutes = require('./api/verify');  // ← ADD THIS
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,8 +26,9 @@ require('./db/init');
 // API routes
 app.use('/api/extract', extractRoutes);
 app.use('/api/graphs', graphRoutes);
-app.use('/api/gaps', gapRoutes);          
-app.use('/api/ideas', ideaRoutes);        
+app.use('/api/gaps', gapRoutes);
+app.use('/api/ideas', ideaRoutes);
+app.use('/api', verifyRoutes);  // ← ADD THIS
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ 

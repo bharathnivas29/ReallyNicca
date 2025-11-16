@@ -1,34 +1,44 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, ReactNode } from 'react';
 
-interface Node {
+export interface Node {
   id: number;
   label: string;
   type: string;
+  confidence?: number;        // ← ADD THIS
+  reasoning?: string[];       // ← ADD THIS
+  can_verify?: boolean;       // ← ADD THIS
 }
 
-interface Edge {
+export interface Edge {
   from: number;
   to: number;
   label: string;
   source?: string;
+  context?: string;           // ← ADD THIS
+  reason?: string;            // ← ADD THIS
   weight?: number;
 }
 
-export interface GraphData {
+export interface Metadata {
+  total_entities: number;
+  total_relationships: number;
+  dependency_edges: number;
+  pattern_edges: number;
+  semantic_edges: number;
+  average_confidence?: number;       // ← ADD THIS
+  accuracy_estimate?: string;        // ← ADD THIS
+  model?: string;                    // ← ADD THIS
+}
+
+export interface Graph {
   nodes: Node[];
   edges: Edge[];
-  metadata?: {
-    total_entities: number;
-    total_relationships: number;
-    dependency_edges: number;
-    pattern_edges: number;
-    semantic_edges: number;
-  };
+  metadata?: Metadata;
 }
 
 interface GraphContextType {
-  graph: GraphData | null;
-  setGraph: (graph: GraphData | null) => void;
+  graph: Graph | null;
+  setGraph: (graph: Graph) => void;
   addNode: (node: Node) => void;
   updateNode: (id: number, updates: Partial<Node>) => void;
   deleteNode: (id: number) => void;
@@ -48,18 +58,14 @@ export const GraphContext = createContext<GraphContextType>({
   deleteEdge: () => {},
 });
 
-export const GraphProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [graph, setGraph] = useState<GraphData | null>(null);
+export const GraphProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [graph, setGraph] = useState<Graph | null>(null);
 
   const addNode = (node: Node) => {
     if (!graph) return;
     setGraph({
       ...graph,
       nodes: [...graph.nodes, node],
-      metadata: graph.metadata ? {
-        ...graph.metadata,
-        total_entities: graph.metadata.total_entities + 1
-      } : undefined
     });
   };
 
@@ -67,7 +73,9 @@ export const GraphProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!graph) return;
     setGraph({
       ...graph,
-      nodes: graph.nodes.map(n => n.id === id ? { ...n, ...updates } : n)
+      nodes: graph.nodes.map((node) =>
+        node.id === id ? { ...node, ...updates } : node
+      ),
     });
   };
 
@@ -75,12 +83,8 @@ export const GraphProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!graph) return;
     setGraph({
       ...graph,
-      nodes: graph.nodes.filter(n => n.id !== id),
-      edges: graph.edges.filter(e => e.from !== id && e.to !== id), // Remove connected edges
-      metadata: graph.metadata ? {
-        ...graph.metadata,
-        total_entities: graph.metadata.total_entities - 1
-      } : undefined
+      nodes: graph.nodes.filter((node) => node.id !== id),
+      edges: graph.edges.filter((edge) => edge.from !== id && edge.to !== id),
     });
   };
 
@@ -89,10 +93,6 @@ export const GraphProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setGraph({
       ...graph,
       edges: [...graph.edges, edge],
-      metadata: graph.metadata ? {
-        ...graph.metadata,
-        total_relationships: graph.metadata.total_relationships + 1
-      } : undefined
     });
   };
 
@@ -100,9 +100,9 @@ export const GraphProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!graph) return;
     setGraph({
       ...graph,
-      edges: graph.edges.map(e => 
-        e.from === from && e.to === to ? { ...e, ...updates } : e
-      )
+      edges: graph.edges.map((edge) =>
+        edge.from === from && edge.to === to ? { ...edge, ...updates } : edge
+      ),
     });
   };
 
@@ -110,25 +110,23 @@ export const GraphProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!graph) return;
     setGraph({
       ...graph,
-      edges: graph.edges.filter(e => !(e.from === from && e.to === to)),
-      metadata: graph.metadata ? {
-        ...graph.metadata,
-        total_relationships: graph.metadata.total_relationships - 1
-      } : undefined
+      edges: graph.edges.filter((edge) => !(edge.from === from && edge.to === to)),
     });
   };
 
   return (
-    <GraphContext.Provider value={{ 
-      graph, 
-      setGraph, 
-      addNode, 
-      updateNode, 
-      deleteNode, 
-      addEdge, 
-      updateEdge, 
-      deleteEdge 
-    }}>
+    <GraphContext.Provider
+      value={{
+        graph,
+        setGraph,
+        addNode,
+        updateNode,
+        deleteNode,
+        addEdge,
+        updateEdge,
+        deleteEdge,
+      }}
+    >
       {children}
     </GraphContext.Provider>
   );
