@@ -1,0 +1,118 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ============================================================================
+# NODE.JS / REACT (Frontend & Backend)
+# ============================================================================
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+frontend/coverage/
+backend/coverage/
+
+# Production builds
+/build
+frontend/build/
+frontend/dist/
+
+# ============================================================================
+# PYTHON (Backend Virtual Environment)
+# ============================================================================
+
+# Virtual environments
+backend/venv/
+venv/
+env/
+ENV/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ============================================================================
+# ENVIRONMENT & SECRETS
+# ============================================================================
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ============================================================================
+# DATABASE
+# ============================================================================
+
+*.db
+*.sqlite
+*.sqlite3
+backend/graphs.db
+
+# ============================================================================
+# LOGS
+# ============================================================================
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# ============================================================================
+# OPERATING SYSTEM FILES
+# ============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+
+# ============================================================================
+# IDE / EDITOR FILES
+# ============================================================================
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains (WebStorm, PyCharm, etc.)
+.idea
